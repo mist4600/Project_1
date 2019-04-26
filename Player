@@ -1,0 +1,69 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class Player {
+	private String name;
+	private final Board board;
+	public boolean isHuman;
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Player(String name, boolean isHuman) {
+		name = name;
+		this.isHuman = isHuman;
+		board = new Board(this);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+/*
+	public void shoot() {
+		System.out.println(name + " is shooting on the other player");
+	}
+	
+	private void think() {
+		// TODO assuming here that all ships are the same
+		
+		for(int i=1; i<=7; i++) {
+			ownBoard.print();
+			System.out.println("Enter coordinates col row or -1 to rotate:");
+			int col = scnr.nextInt();
+			//TODO think about rotating
+			int row = scnr.nextInt();
+			Ship p = new Ship(); // TODO flesh out the details
+			boolean valid = this.ownBoard.placeShip(row, col, p);
+			// TODO deal with incorrect input
+		}
+	}
+	
+	private void compute() {
+		for(int i=1; i<=7; i++) {
+			int col = ran.nextInt(ownBoard.COLS);
+			int row = ran.nextInt(ownBoard.ROWS);
+			Ship p = new Ship();
+			boolean valid = this.ownBoard.placeShip(row, col, p);
+		}
+	}
+	
+	public void initBoard() {
+		System.out.println(name + " please set your pieces");
+		
+		if(isHuman) {
+			System.out.println("Initianing board by thinking...");
+			think();
+		}
+		else {
+			System.out.println("Initianing board by computing...");
+			compute();
+		}
+		//TODO is to fix this
+		//ownBoard.randomize();
+	}*/
+}
