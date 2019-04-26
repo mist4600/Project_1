@@ -1,0 +1,80 @@
+import java.util.Random;
+import java.util.Arrays;
+import java.util.Scanner;
+public class Board {
+
+	public final int ROWS = 10;
+	public final int COLS = 15;
+	private final char[][] cells = new char[ROWS][COLS];
+	private final Ship[] ships = new Ship[7];
+	private Player player;
+	
+	public static final char SEA = '~';
+	public static final char SHIP = 'S';
+	public static final char HIT = 'X';
+	public static final char MISS = 'O';
+
+	private final char[] ship_order = {'I','J','L','O','S','T','Z'};
+
+	public Board(Player player) {
+		this.player = player;
+		for(int i = 0; i < ROWS; i++) {
+			Arrays.fill(cells[i], SEA);
+		}
+
+		int ptr = 0;
+		Scanner input = new Scanner(System.in);
+		String line;
+		int x;
+		int y;
+		System.out.println(player.isHuman);
+		while (ptr < 7) {
+			ships[ptr] = new Ship(ship_order[ptr]);
+			if (player.isHuman) {
+				System.out.println(this);
+				System.out.println("Place this ship");
+				System.out.println(ships[ptr] + "\nEnter coordinates or -1 to rotate");
+				line = input.nextLine();
+				while (line.equals("-1")) {
+					Ship.rotate(ships[ptr]);
+					System.out.println(ships[ptr]);
+					line = input.nextLine();
+				}
+				String[] tokens = line.split(" ");
+				x = Integer.parseInt(tokens[0]);
+				y = Integer.parseInt(tokens[1]);
+			} else {
+				Random r = new Random();
+				x = r.nextInt(9);
+				y = r.nextInt(14);
+				int rand_rot = r.nextInt(6);
+				while (rand_rot > 0) {
+					Ship.rotate(ships[ptr]);
+					rand_rot--;
+				}
+			}
+			try {
+				placeShip(ships[ptr], x, y);
+				System.out.println(ships[ptr]);
+				ptr++;
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		System.out.println(this);
+	}
+	// puts the ship into the board
+	private void placeShip(Ship ship, int x, int y) {
+		for (int[] offsets : ship.getCoordinates()) {
+			cells[x + offsets[0]][y + offsets[1]] = SHIP;
+		}
+	}
+
+	public String toString() {
+		String board = "";
+		for (int i = 0; i < ROWS; i++) {
+			board = board + "|" + new String(cells[i]).replace("~","~|").replace("S","S|")  + "\n";
+		}
+		return board;
+	}
+}
