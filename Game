@@ -1,0 +1,21 @@
+import java.util.Scanner;
+
+public class Game {
+	public static void main(String[] args) {
+	
+		System.out.println("Game starts");
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Enter your name: ");
+		Player player1 = new Player(scan.nextLine(), true);
+		System.out.print("Give a name to your computer opponent: " );
+		Player CPU = new Player(scan.nextLine(), false);
+/*
+		//main loop
+		// Deliverable 2
+		while(true) {
+			game.player1.shoot();
+			game.player2.shoot();
+			break;
+		} */
+	}
+}
