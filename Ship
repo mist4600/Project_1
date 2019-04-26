@@ -1,0 +1,122 @@
+import java.util.Arrays;
+
+public class Ship {
+	private int x;
+	private int y;
+	private boolean alive;
+	private int columns;
+	private int rows;
+	private String string;
+	private int[][] map;
+	private char[][] char_map;
+
+	public enum Type {
+		I(new int [][]{{0,0},{0,1},{0,2},{0,3}}, 1,4), J(new int [][]{{0,0},{0,1},{0,2},{1,2}}, 2, 3), L(new int [][]{{0,0},{0,1},{0,2},{1,0}},2, 3), O(new int [][]{{0,0},{0,1},{1,0},{1,1}},2,2), S(new int [][]{{0,1},{0,2},{1,0},{1,1}},2,3), T(new int [][]{{0,0},{0,1},{0,2},{1,1}},2,3), Z(new int [][]{{0,0},{0,1},{1,1},{1,2}},2,3);
+
+		public int[][] map;
+		public int rows;
+		public int columns;
+		private Type(int[][] map, int rows, int columns) {
+			this.map = map;
+			this.rows = rows;
+			this.columns = columns;
+		}
+
+		public Type next() {
+        		return Type.values()[(this.ordinal()+1) % Type.values().length];
+    		}
+	}
+
+	private Type ship_type;
+	public Ship(char type) {
+		switch (type){
+			case 'I':
+				ship_type = Type.I;
+				break;
+			case 'J':
+				ship_type =Type.J;
+				break;
+			case 'L':
+				ship_type = Type.L;
+				break;
+			case 'O':
+				ship_type = Type.O;
+				break;
+			case 'S':
+				ship_type = Type.S;
+				break;
+			case 'T':
+				ship_type = Type.T;
+				break;
+			case 'Z':
+				ship_type = Type.Z;
+				break;
+		}
+		alive = true;
+		this.rows = ship_type.rows;
+		this.columns = ship_type.columns;
+		this.map = ship_type.map;
+		this.char_map = new char[this.rows][this.columns]; 
+
+		for (int i = 0; i < this.rows; i++) {
+			Arrays.fill(this.char_map[i],Board.SEA);
+		}
+		for (int[] pair : this.map) {
+			this.char_map[pair[0]][pair[1]] = Board.SHIP;
+		}
+		createString(this);
+	}
+
+	public static void rotate(Ship ship) {
+		char[][] input = ship.char_map;
+		int n = input.length;
+		int m = input[0].length;
+		char[][] output = new char[m][n];
+		int num_points = 0;
+		for (int i=0; i<n; i++) {
+			for (int j=0;j<m; j++) {
+				output [j][n-1-i] = input[i][j];
+				if (input[i][j] == Board.SHIP) {
+					num_points++;	
+				}
+			}
+		}
+
+		ship.char_map = output;
+		ship.rows = m;
+		ship.columns = n;
+		int[][] new_map = new int[num_points][2];	
+		n = output.length;
+		m = output[0].length;
+		int ptr = 0;
+		// remaps the int
+		for (int i=0; i<n; i++) {
+			for (int j=0;j<m; j++) {
+				if (output[i][j] == Board.SHIP) {
+					new_map[ptr][0] = i;
+					new_map[ptr++][1] = j;
+				}
+			}
+		}	
+		ship.map = new_map;
+		Ship.createString(ship);
+	}
+
+	public String toString() {
+		return this.string;
+	}
+
+	public int[][] getCoordinates() {
+		return this.map;
+	}
+
+	public static void createString(Ship ship) {
+		int rows = ship.rows; 
+		int columns = ship.columns;
+		String string_rep = "";
+		for (int i = 0; i < rows; i++) {
+			string_rep += new String(ship.char_map[i]) + "\n"; 
+		}
+		ship.string = string_rep;
+	}
+}
