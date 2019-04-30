@@ -5,10 +5,10 @@ public class Board {
 
 	public final int ROWS = 10;
 	public final int COLS = 15;
-	private final char[][] cells = new char[ROWS][COLS];
+	private char[][] cells = new char[ROWS][COLS];
 	private final Ship[] ships = new Ship[7];
 	private Player player;
-	
+
 	public static final char SEA = '~';
 	public static final char SHIP = 'S';
 	public static final char HIT = 'X';
@@ -27,12 +27,11 @@ public class Board {
 		String line;
 		int x;
 		int y;
-		System.out.println(player.isHuman);
 		while (ptr < 7) {
 			ships[ptr] = new Ship(ship_order[ptr]);
 			if (player.isHuman) {
 				System.out.println(this);
-				System.out.println("Place this ship");
+				System.out.println("Insert the following:");
 				System.out.println(ships[ptr] + "\nEnter coordinates or -1 to rotate");
 				line = input.nextLine();
 				while (line.equals("-1")) {
@@ -41,8 +40,16 @@ public class Board {
 					line = input.nextLine();
 				}
 				String[] tokens = line.split(" ");
-				x = Integer.parseInt(tokens[0]);
-				y = Integer.parseInt(tokens[1]);
+				y = Integer.parseInt(tokens[0]);
+				x = Integer.parseInt(tokens[1]);
+                                if (x < 0 || x > 9) {
+                                    System.out.println("\nx coordinate should be between 0 and 14\n");
+                                    continue;
+                                }
+                                if (y < 0 || y > 14) {
+                                    System.out.println("\ny coordinate should be between 0 and 9\n");
+                                    continue;
+                                }
 			} else {
 				Random r = new Random();
 				x = r.nextInt(9);
@@ -58,22 +65,39 @@ public class Board {
 				System.out.println(ships[ptr]);
 				ptr++;
 			} catch (Exception e) {
-				continue;
+                            // then probably an array out of bounds exception
+                            // if player isHuman, tell them to put in new coordinates
+                            if (player.isHuman) {
+                                System.out.println("This ship is going out of the board, retry!");
+                            }
+                            // skips incrementing ptr so that the same ship will be placed
+			    continue;
 			}
 		}
 		System.out.println(this);
 	}
 	// puts the ship into the board
 	private void placeShip(Ship ship, int x, int y) {
+                char[][] cells_copy = new char[cells.length][cells[0].length];
+                for (int i = 0; i < cells.length; i++) {
+                    for (int j = 0; j < cells[0].length; j++) {
+                        cells_copy[i][j] = cells[i][j];
+                    }
+                }
 		for (int[] offsets : ship.getCoordinates()) {
-			cells[x + offsets[0]][y + offsets[1]] = SHIP;
+			cells_copy[x + offsets[0]][y + offsets[1]] = SHIP;
 		}
+                cells = cells_copy;
 	}
 
 	public String toString() {
-		String board = "";
+		String board = "\n";
+                System.out.print("    ");
+                for (int j = 0; j < COLS; j++) {
+                    System.out.print(String.format("%-2s| ",String.valueOf(j)).replace("|"," "));
+                }
 		for (int i = 0; i < ROWS; i++) {
-			board = board + "|" + new String(cells[i]).replace("~","~|").replace("S","S|")  + "\n";
+                    board = board + String.format("%-2s| %s",String.valueOf(i), new String(cells[i]).replace("~","~ | ").replace("S", "S | ")) + "\n";
 		}
 		return board;
 	}
